@@ -1,0 +1,16 @@
+snippet f "Feature" b
+Feature: ${1:Feature description}
+endsnippet
+
+snippet b "Background" b
+Background:
+	Given 
+endsnippet
+
+snippet s "Scenario" b
+Scenario: ${1:Scenario description}
+	Given ${2}
+	When ${3}
+	Then ${4}
+endsnippet
+

@@ -1,0 +1,83 @@
+# vim:ft=snippets:
+
+# Auxiliary python function to generate random GUID
+global !p
+def guid():
+	if not snip.c:
+		import uuid
+		snip.rv = str(uuid.uuid4()).upper()
+endglobal
+
+snippet installer "WiX Installer Template"
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="*" Name="${1}" Language="1033" Version="1.0.0.0"
+	Manufacturer="${2}" UpgradeCode="`!p guid()`">
+		<Package InstallerVersion="300" Compressed="yes" InstallScope="perMachine" />
+
+		<Media Id="1" Cabinet="data.cab" EmbedCab="yes" CompressionLevel="high" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="INSTALLFOLDER" Name="$1" />
+			</Directory>
+		</Directory>
+
+		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+			${3:TODO: Insert files, registry keys, and other resources here.}
+		</ComponentGroup>
+
+		<Feature Id="DefaultFeature" Title="DefaultFeature" Level="1">
+			<ComponentGroupRef Id="ProductComponents" />
+		</Feature>
+	</Product>
+</Wix>
+endsnippet
+
+snippet emptyfolder "Hack to Create Empty Folder"
+<Component Directory="${1:ID_FOLDER_TO_CREATE}" Guid="`!p guid()`" KeyPath="yes">
+	<CreateFolder />
+</Component>
+endsnippet
+
+# If Component/@Id is ommitted, WiX uses the File/@Id with KeyPath="yes"
+# If File/@Id is ommited, WiX uses the name portion of File/@Source
+snippet file "Create File"
+<Component Guid="*">
+	<File Source="${1}" KeyPath="yes" />
+</Component>
+endsnippet
+
+
+snippet customdll "Create Custom Action DLL (Type 1)"
+<CustomAction
+	Id="${1}"
+	BinaryKey="${2}"
+	DllEntry="${3}"
+	Execute="${4:commit|deferred|immediate|rollback}"
+	Return="${5:asyncNoWait|asyncWait|check|ignore}"
+	Impersonate="${6:yes|no}" />
+endsnippet
+
+snippet custombefore "Sequence Custom Action before other"
+<Custom Action="${1:CUSTOM-ACTION-ID}" Before="${2:OTHER-CUSTOM-OR-STANDARD-ACTION-ID}" />
+endsnippet
+
+snippet customafter "Sequence Custom Action after other"
+<Custom Action="${1:CUSTOM-ACTION-ID}" After="${2:OTHER-CUSTOM-OR-STANDARD-ACTION-ID}" />
+endsnippet
+
+snippet uiseq "Install UI Sequence"
+<InstallUISequence>
+	$0
+</InstallUISequence>
+endsnippet
+
+snippet installseq "Install Execute Sequence"
+<InstallExecuteSequence>
+	$0
+</InstallExecuteSequence>
+endsnippet

@@ -1,0 +1,20 @@
+# Auxiliary python function to generate random GUID
+global !p
+def guid():
+	if not snip.c:
+		import uuid
+		snip.rv = str(uuid.uuid4()).upper()
+endglobal
+
+snippet guid "Generates a GUID" i
+`!p guid()`
+endsnippet
+
+snippet lorem "Lorem Ipsum - 50 Words" b
+Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod
+tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
+vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren,
+no sea takimata sanctus est Lorem ipsum dolor sit amet.
+endsnippet
+
+# vim:ft=snippets:
