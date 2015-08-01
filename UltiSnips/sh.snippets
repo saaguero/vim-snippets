@@ -66,7 +66,7 @@ done
 endsnippet
 
 snippet here "here document (here)"
-<<-${2:'${1:TOKEN}'}
+<<-${2:'${1:EOF}'}
 	$0
 ${1/['"`](.+)['"`]/$1/}
 endsnippet
@@ -87,6 +87,64 @@ snippet while "while ... (done)"
 while ${2:[[ ${1:condition} ]]}; do
 	${0:#statements}
 done
+endsnippet
+
+
+# Adapted from http://mywiki.wooledge.org/BashFAQ/035
+snippet opt "handle command-line arguments (opt)"
+version=1.0.0
+file=
+
+function show_help {
+echo "
+Usage: `basename "\$0"` [OPTIONS]
+
+	Run and do some cool stuff
+
+	-f, --file FILE		the file
+	-h, --help			display this help and exit
+	--version			output version information and exit
+"
+}
+
+while :; do
+	case \$1 in
+		-h|--help)
+			show_help
+			exit
+			;;
+		--version)
+			echo `basename "\$0"` version "$version"
+			exit
+			;;
+		-f|--file)
+			if [ -n "\$2" ]; then
+				file=\$2
+				shift 2
+				continue
+			else
+				printf 'ERROR: "--file" requires a non-empty option argument.\n' >&2
+				exit 1
+			fi
+			;;
+		--) # End of all options.
+			shift
+			break
+			;;
+		-?*)
+			printf 'WARN: Unknown option (ignored): %s\n' "\$1" >&2
+			;;
+		*)
+			break
+	esac
+
+	shift
+done
+
+if [ -z "\$file" ]; then
+	printf 'ERROR: option "--file FILE" not given. See --help.\n' >&2
+	exit 1
+fi
 endsnippet
 
 # vim:ft=snippets:
